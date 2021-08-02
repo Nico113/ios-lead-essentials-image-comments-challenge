@@ -26,11 +26,19 @@ class ImageCommentsMapper {
 	}
 
 	public static func map(_ data: Data, from response: HTTPURLResponse) throws -> [FeedImage] {
-		guard response.isOK, let root = try? JSONDecoder().decode(Root.self, from: data) else {
+		guard response.isRangeOK, let root = try? JSONDecoder().decode(Root.self, from: data) else {
 			throw Error.invalidData
 		}
 
 		return root.images
+	}
+}
+
+extension HTTPURLResponse {
+	private static var OK_2xx: Range<Int> { return 200 ..< 300 }
+
+	var isRangeOK: Bool {
+		return HTTPURLResponse.OK_2xx.contains(statusCode)
 	}
 }
 
@@ -57,12 +65,15 @@ class ImageCommentsMapperTests: XCTestCase {
 		}
 	}
 
-	func test_map_deliversNoItemsOn200HTTPResponseWithEmptyJSONList() throws {
+	func test_map_deliversNoItemsOn2xxHTTPResponseWithEmptyJSONList() throws {
 		let emptyListJSON = makeItemsJSON([])
+		let samples = [200, 201, 202, 203]
 
-		let result = try ImageCommentsMapper.map(emptyListJSON, from: HTTPURLResponse(statusCode: 200))
+		try samples.forEach { code in
+			let result = try ImageCommentsMapper.map(emptyListJSON, from: HTTPURLResponse(statusCode: code))
 
-		XCTAssertEqual(result, [])
+			XCTAssertEqual(result, [])
+		}
 	}
 
 	func test_map_deliversItemsOn200HTTPResponseWithJSONItems() throws {
