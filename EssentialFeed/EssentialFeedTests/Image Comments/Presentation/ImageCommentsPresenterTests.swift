@@ -5,6 +5,24 @@
 import XCTest
 @testable import EssentialFeed
 
+struct LocalImageComment: Equatable {
+	public let id: UUID
+	public let message: String
+	public let createdAt: Date
+	public let author: String
+
+	public init(id: UUID, message: String, createdAt: Date, author: String) {
+		self.id = id
+		self.message = message
+		self.createdAt = createdAt
+		self.author = author
+	}
+}
+
+struct ImageCommentsViewModel {
+	public let imageComments: [ImageComment]
+}
+
 class ImageCommentsPresenter {
 	public static var title: String {
 		NSLocalizedString(
@@ -12,6 +30,10 @@ class ImageCommentsPresenter {
 			tableName: "ImageComments",
 			bundle: Bundle(for: FeedPresenter.self),
 			comment: "Title for the image comments view")
+	}
+
+	public static func map(_ imageComments: [ImageComment]) -> ImageCommentsViewModel {
+		ImageCommentsViewModel(imageComments: imageComments)
 	}
 }
 
@@ -21,11 +43,11 @@ class ImageCommentsPresenterTests: XCTestCase {
 	}
 
 	func test_map_createsViewModel() {
-		let feed = uniqueImageFeed().models
+		let comments = uniqueImageComments().models
 
-		let viewModel = FeedPresenter.map(feed)
+		let viewModel = ImageCommentsPresenter.map(comments)
 
-		XCTAssertEqual(viewModel.feed, feed)
+		XCTAssertEqual(viewModel.imageComments, comments)
 	}
 
 	// MARK: - Helpers
@@ -38,5 +60,15 @@ class ImageCommentsPresenterTests: XCTestCase {
 			XCTFail("Missing localized string for key: \(key) in table: \(table)", file: file, line: line)
 		}
 		return value
+	}
+
+	private func uniqueImageComment() -> ImageComment {
+		return ImageComment(id: UUID(), message: "a message", createdAt: Date(), author: "an author")
+	}
+
+	private func uniqueImageComments() -> (models: [ImageComment], local: [LocalImageComment]) {
+		let models = [uniqueImageComment(), uniqueImageComment()]
+		let local = models.map { LocalImageComment(id: $0.id, message: $0.message, createdAt: $0.createdAt, author: $0.author) }
+		return (models, local)
 	}
 }
