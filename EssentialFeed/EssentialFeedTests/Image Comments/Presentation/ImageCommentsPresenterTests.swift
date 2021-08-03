@@ -5,38 +5,6 @@
 import XCTest
 @testable import EssentialFeed
 
-struct LocalImageComment: Equatable {
-	public let id: UUID
-	public let message: String
-	public let createdAt: Date
-	public let author: String
-
-	public init(id: UUID, message: String, createdAt: Date, author: String) {
-		self.id = id
-		self.message = message
-		self.createdAt = createdAt
-		self.author = author
-	}
-}
-
-struct ImageCommentsViewModel {
-	public let imageComments: [ImageComment]
-}
-
-class ImageCommentsPresenter {
-	public static var title: String {
-		NSLocalizedString(
-			"IMAGE_COMMENTS_VIEW_TITLE",
-			tableName: "ImageComments",
-			bundle: Bundle(for: FeedPresenter.self),
-			comment: "Title for the image comments view")
-	}
-
-	public static func map(_ imageComments: [ImageComment]) -> ImageCommentsViewModel {
-		ImageCommentsViewModel(imageComments: imageComments)
-	}
-}
-
 class ImageCommentsPresenterTests: XCTestCase {
 	func test_title_isLocalized() {
 		XCTAssertEqual(ImageCommentsPresenter.title, localized("IMAGE_COMMENTS_VIEW_TITLE"))
@@ -54,7 +22,7 @@ class ImageCommentsPresenterTests: XCTestCase {
 
 	private func localized(_ key: String, file: StaticString = #filePath, line: UInt = #line) -> String {
 		let table = "ImageComments"
-		let bundle = Bundle(for: FeedPresenter.self)
+		let bundle = Bundle(for: ImageCommentsPresenter.self)
 		let value = bundle.localizedString(forKey: key, value: nil, table: table)
 		if value == key {
 			XCTFail("Missing localized string for key: \(key) in table: \(table)", file: file, line: line)
