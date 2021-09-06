@@ -7,33 +7,37 @@ import EssentialFeed
 import EssentialFeediOS
 
 extension ImageCommentsUIIntegrationTests {
-	func assertThat(_ sut: ListViewController, isRendering feed: [FeedImage], file: StaticString = #filePath, line: UInt = #line) {
+	var dateFormatter: RelativeDateTimeFormatter {
+		return RelativeDateTimeFormatter()
+	}
+
+	func assertThat(_ sut: ListViewController, isRendering imageComments: [ImageComment], file: StaticString = #filePath, line: UInt = #line) {
 		sut.view.enforceLayoutCycle()
 
-		guard sut.numberOfRenderedFeedImageViews() == feed.count else {
-			return XCTFail("Expected \(feed.count) images, got \(sut.numberOfRenderedFeedImageViews()) instead.", file: file, line: line)
+		guard sut.numberOfRenderedFeedImageViews() == imageComments.count else {
+			return XCTFail("Expected \(imageComments.count) images, got \(sut.numberOfRenderedFeedImageViews()) instead.", file: file, line: line)
 		}
 
-		feed.enumerated().forEach { index, image in
-			assertThat(sut, hasViewConfiguredFor: image, at: index, file: file, line: line)
+		imageComments.enumerated().forEach { index, imageComment in
+			assertThat(sut, hasViewConfiguredFor: imageComment, at: index, file: file, line: line)
 		}
 
 		executeRunLoopToCleanUpReferences()
 	}
 
-	func assertThat(_ sut: ListViewController, hasViewConfiguredFor image: FeedImage, at index: Int, file: StaticString = #filePath, line: UInt = #line) {
+	func assertThat(_ sut: ListViewController, hasViewConfiguredFor imageComment: ImageComment, at index: Int, file: StaticString = #filePath, line: UInt = #line) {
 		let view = sut.feedImageView(at: index)
 
-		guard let cell = view as? FeedImageCell else {
+		guard let cell = view as? ImageCommentCell else {
 			return XCTFail("Expected \(FeedImageCell.self) instance, got \(String(describing: view)) instead", file: file, line: line)
 		}
 
-		let shouldLocationBeVisible = (image.location != nil)
-		XCTAssertEqual(cell.isShowingLocation, shouldLocationBeVisible, "Expected `isShowingLocation` to be \(shouldLocationBeVisible) for image view at index (\(index))", file: file, line: line)
+		XCTAssertEqual(cell.commentLabel.text, imageComment.message, "Expected message text to be \(String(describing: imageComment.message)) for image comment view at index (\(index))", file: file, line: line)
 
-		XCTAssertEqual(cell.locationText, image.location, "Expected location text to be \(String(describing: image.location)) for image  view at index (\(index))", file: file, line: line)
+		XCTAssertEqual(cell.authorLabel.text, imageComment.author, "Expected author text to be \(String(describing: imageComment.author)) for image comment view at index (\(index)", file: file, line: line)
 
-		XCTAssertEqual(cell.descriptionText, image.description, "Expected description text to be \(String(describing: image.description)) for image view at index (\(index)", file: file, line: line)
+		let createdAt = dateFormatter.localizedString(for: imageComment.createdAt, relativeTo: Date())
+		XCTAssertEqual(cell.dateLabel.text, createdAt, "Expected creation date text to be \(String(describing: createdAt)) for image comment view at index (\(index)", file: file, line: line)
 	}
 
 	private func executeRunLoopToCleanUpReferences() {

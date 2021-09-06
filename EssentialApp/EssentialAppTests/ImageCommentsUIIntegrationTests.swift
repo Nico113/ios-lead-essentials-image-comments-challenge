@@ -5,7 +5,7 @@
 import XCTest
 import UIKit
 import EssentialApp
-import EssentialFeed
+@testable import EssentialFeed
 import EssentialFeediOS
 
 class ImageCommentsUIIntegrationTests: XCTestCase {
@@ -47,25 +47,25 @@ class ImageCommentsUIIntegrationTests: XCTestCase {
 		XCTAssertFalse(sut.isShowingLoadingIndicator, "Expected no loading indicator once user initiated loading completes with error")
 	}
 
+	func test_loadImageCommentsCompletion_rendersSuccessfullyLoadedImageComments() {
+		let imageComment0 = makeImageComment(message: "message 1", createdAt: Date(), author: "author 1")
+		let imageComment1 = makeImageComment(message: "message 2 very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long comment", createdAt: Date(), author: "author author 2")
+		let imageComment2 = makeImageComment(message: "another short message", createdAt: Date(), author: "author author author 3")
+		let imageComment3 = makeImageComment(message: "another very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long comment", createdAt: Date(), author: "author author author author 4")
+		let (sut, loader) = makeSUT()
+
+		sut.loadViewIfNeeded()
+		assertThat(sut, isRendering: [])
+
+		loader.completeImageCommentsLoading(with: [imageComment0], at: 0)
+		assertThat(sut, isRendering: [imageComment0])
+
+		sut.simulateUserInitiatedReload()
+		loader.completeImageCommentsLoading(with: [imageComment0, imageComment1, imageComment2, imageComment3], at: 1)
+		assertThat(sut, isRendering: [imageComment0, imageComment1, imageComment2, imageComment3])
+	}
+
 	/*
-	 func test_loadFeedCompletion_rendersSuccessfullyLoadedFeed() {
-	 	let image0 = makeImage(description: "a description", location: "a location")
-	 	let image1 = makeImage(description: nil, location: "another location")
-	 	let image2 = makeImage(description: "another description", location: nil)
-	 	let image3 = makeImage(description: nil, location: nil)
-	 	let (sut, loader) = makeSUT()
-
-	 	sut.loadViewIfNeeded()
-	 	assertThat(sut, isRendering: [])
-
-	 	loader.completeFeedLoading(with: [image0], at: 0)
-	 	assertThat(sut, isRendering: [image0])
-
-	 	sut.simulateUserInitiatedReload()
-	 	loader.completeFeedLoading(with: [image0, image1, image2, image3], at: 1)
-	 	assertThat(sut, isRendering: [image0, image1, image2, image3])
-	 }
-
 	 func test_loadFeedCompletion_rendersSuccessfullyLoadedEmptyFeedAfterNonEmptyFeed() {
 	 	let image0 = makeImage()
 	 	let image1 = makeImage()
@@ -345,11 +345,7 @@ class ImageCommentsUIIntegrationTests: XCTestCase {
 		return (sut, loader)
 	}
 
-	private func makeImage(description: String? = nil, location: String? = nil, url: URL = URL(string: "http://any-url.com")!) -> FeedImage {
-		return FeedImage(id: UUID(), description: description, location: location, url: url)
-	}
-
-	private func anyImageData() -> Data {
-		return UIImage.make(withColor: .red).pngData()!
+	private func makeImageComment(message: String, createdAt: Date, author: String) -> ImageComment {
+		return ImageComment(id: UUID(), message: message, createdAt: createdAt, author: author)
 	}
 }
