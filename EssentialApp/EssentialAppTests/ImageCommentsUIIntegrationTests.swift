@@ -65,21 +65,21 @@ class ImageCommentsUIIntegrationTests: XCTestCase {
 		assertThat(sut, isRendering: [imageComment0, imageComment1, imageComment2, imageComment3])
 	}
 
+	func test_loadImageCommentsCompletion_rendersSuccessfullyLoadedEmptyImageCommentsAfterNonEmptyImageComments() {
+		let imageComment0 = makeImageComment(message: "message one", createdAt: Date(), author: "author one")
+		let imageComment1 = makeImageComment(message: "message two", createdAt: Date(), author: "author two")
+		let (sut, loader) = makeSUT()
+
+		sut.loadViewIfNeeded()
+		loader.completeImageCommentsLoading(with: [imageComment0, imageComment1], at: 0)
+		assertThat(sut, isRendering: [imageComment0, imageComment1])
+
+		sut.simulateUserInitiatedReload()
+		loader.completeImageCommentsLoading(with: [], at: 1)
+		assertThat(sut, isRendering: [])
+	}
+
 	/*
-	 func test_loadFeedCompletion_rendersSuccessfullyLoadedEmptyFeedAfterNonEmptyFeed() {
-	 	let image0 = makeImage()
-	 	let image1 = makeImage()
-	 	let (sut, loader) = makeSUT()
-
-	 	sut.loadViewIfNeeded()
-	 	loader.completeFeedLoading(with: [image0, image1], at: 0)
-	 	assertThat(sut, isRendering: [image0, image1])
-
-	 	sut.simulateUserInitiatedReload()
-	 	loader.completeFeedLoading(with: [], at: 1)
-	 	assertThat(sut, isRendering: [])
-	 }
-
 	 func test_loadFeedCompletion_doesNotAlterCurrentRenderingStateOnError() {
 	 	let image0 = makeImage()
 	 	let (sut, loader) = makeSUT()
