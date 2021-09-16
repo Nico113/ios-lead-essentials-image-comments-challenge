@@ -4,7 +4,7 @@
 
 import Foundation
 
-public class ImageCommentsPresenter {
+public final class ImageCommentsPresenter {
 	public static var title: String {
 		NSLocalizedString(
 			"IMAGE_COMMENTS_VIEW_TITLE",

@@ -137,7 +137,7 @@ class ImageCommentsUIIntegrationTests: XCTestCase {
 		line: UInt = #line
 	) -> (sut: ListViewController, loader: LoaderSpy) {
 		let loader = LoaderSpy()
-		let sut = CommentsUIComposer.feedComposedWith(imageCommentLoader: loader.loadPublisher)
+		let sut = CommentsUIComposer.imageCommentsComposedWith(imageCommentLoader: loader.loadPublisher)
 		trackForMemoryLeaks(loader, file: file, line: line)
 		trackForMemoryLeaks(sut, file: file, line: line)
 		return (sut, loader)

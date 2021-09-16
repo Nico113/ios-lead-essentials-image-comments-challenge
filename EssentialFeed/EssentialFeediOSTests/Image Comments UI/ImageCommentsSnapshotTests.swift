@@ -7,7 +7,7 @@ import EssentialFeediOS
 @testable import EssentialFeed
 
 class ImageCommentsSnapshotTests: XCTestCase {
-	func test_feedWithContent() {
+	func test_imageCommentWithContent() {
 		let sut = makeSUT()
 
 		sut.display(imageCommentsWithContent())
@@ -32,7 +32,7 @@ class ImageCommentsSnapshotTests: XCTestCase {
 	private func imageCommentsWithContent() -> [CellController] {
 		return [
 			CellController(id: UUID(), ImageCommentCellController(viewModel: ImageCommentViewModel(author: "an author", date: "1 day ago", comment: "a comment"))),
-			CellController(id: UUID(), ImageCommentCellController(viewModel: ImageCommentViewModel(author: "another author", date: "2 days ago", comment: "another Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Long  comment")))
+			CellController(id: UUID(), ImageCommentCellController(viewModel: ImageCommentViewModel(author: "another very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long author", date: "2 days ago", comment: "another Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Long  comment")))
 		]
 	}
 }

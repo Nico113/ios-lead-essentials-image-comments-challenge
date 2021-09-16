@@ -24,11 +24,11 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3c8-Hk-w4Z" userLabel="AuthorLabel">
-                                            <rect key="frame" x="20" y="11" width="37" height="17"/>
+                                            <rect key="frame" x="20" y="11" width="335" height="17"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cva-5O-TWm" userLabel="DateLabel">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cva-5O-TWm" userLabel="DateLabel">
                                             <rect key="frame" x="363" y="11" width="31" height="14.5"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                             <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -48,6 +48,7 @@
                                         <constraint firstItem="gmZ-cj-aTR" firstAttribute="top" secondItem="3c8-Hk-w4Z" secondAttribute="bottom" constant="8" symbolic="YES" id="MXA-kR-goA"/>
                                         <constraint firstItem="cva-5O-TWm" firstAttribute="top" secondItem="PZX-Hp-mf2" secondAttribute="topMargin" id="RBi-52-1S1"/>
                                         <constraint firstItem="3c8-Hk-w4Z" firstAttribute="leading" secondItem="PZX-Hp-mf2" secondAttribute="leadingMargin" id="Tty-Fa-qao"/>
+                                        <constraint firstItem="cva-5O-TWm" firstAttribute="leading" secondItem="3c8-Hk-w4Z" secondAttribute="trailing" constant="8" id="Xh4-js-MMU"/>
                                         <constraint firstItem="gmZ-cj-aTR" firstAttribute="top" secondItem="3c8-Hk-w4Z" secondAttribute="bottom" constant="8" symbolic="YES" id="Xy9-Yc-Ud9"/>
                                         <constraint firstItem="cva-5O-TWm" firstAttribute="trailing" secondItem="PZX-Hp-mf2" secondAttribute="trailingMargin" id="ny5-Tu-sIl"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="gmZ-cj-aTR" secondAttribute="bottom" constant="3" id="xR0-tm-Tpu"/>

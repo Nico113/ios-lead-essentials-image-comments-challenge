@@ -12,29 +12,29 @@ public final class CommentsUIComposer {
 
 	private typealias ImageCommentsPresentationAdapter = LoadResourcePresentationAdapter<[ImageComment], ImageCommentsAdapter>
 
-	public static func feedComposedWith(
+	public static func imageCommentsComposedWith(
 		imageCommentLoader: @escaping () -> AnyPublisher<[ImageComment], Error>
 	) -> ListViewController {
 		let presentationAdapter = ImageCommentsPresentationAdapter(loader: imageCommentLoader)
 
-		let feedController = makeImageCommentViewController(title: ImageCommentsPresenter.title)
-		feedController.onRefresh = presentationAdapter.loadResource
+		let imageCommentsController = makeImageCommentViewController(title: ImageCommentsPresenter.title)
+		imageCommentsController.onRefresh = presentationAdapter.loadResource
 
 		presentationAdapter.presenter = LoadResourcePresenter(
 			resourceView: ImageCommentsAdapter(
-				controller: feedController),
-			loadingView: WeakRefVirtualProxy(feedController),
-			errorView: WeakRefVirtualProxy(feedController),
+				controller: imageCommentsController),
+			loadingView: WeakRefVirtualProxy(imageCommentsController),
+			errorView: WeakRefVirtualProxy(imageCommentsController),
 			mapper: ImageCommentsPresenter.map)
 
-		return feedController
+		return imageCommentsController
 	}
 
 	private static func makeImageCommentViewController(title: String) -> ListViewController {
 		let bundle = Bundle(for: ListViewController.self)
 		let storyboard = UIStoryboard(name: "ImageComments", bundle: bundle)
-		let feedController = storyboard.instantiateInitialViewController() as! ListViewController
-		feedController.title = title
-		return feedController
+		let imageCommentsController = storyboard.instantiateInitialViewController() as! ListViewController
+		imageCommentsController.title = title
+		return imageCommentsController
 	}
 }
