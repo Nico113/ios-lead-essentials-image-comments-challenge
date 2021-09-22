@@ -7,10 +7,6 @@ import EssentialFeed
 import EssentialFeediOS
 
 extension ImageCommentsUIIntegrationTests {
-	var dateFormatter: RelativeDateTimeFormatter {
-		return RelativeDateTimeFormatter()
-	}
-
 	func assertThat(_ sut: ListViewController, isRendering imageComments: [ImageComment], file: StaticString = #filePath, line: UInt = #line) {
 		sut.view.enforceLayoutCycle()
 
@@ -21,26 +17,38 @@ extension ImageCommentsUIIntegrationTests {
 		imageComments.enumerated().forEach { index, imageComment in
 			assertThat(sut, hasViewConfiguredFor: imageComment, at: index, file: file, line: line)
 		}
-
-		executeRunLoopToCleanUpReferences()
 	}
 
 	func assertThat(_ sut: ListViewController, hasViewConfiguredFor imageComment: ImageComment, at index: Int, file: StaticString = #filePath, line: UInt = #line) {
-		let view = sut.feedImageView(at: index)
+		let viewModel = ImageCommentPresenter.map(imageComment)
+
+		XCTAssertEqual(sut.commentText(at: index), viewModel.comment, "message at index \(index) ", file: file, line: line)
+		XCTAssertEqual(sut.authorText(at: index), viewModel.author, "author at index \(index) ", file: file, line: line)
+		XCTAssertEqual(sut.dateText(at: index), viewModel.date, "creation date at index \(index) ", file: file, line: line)
+	}
+}
+
+extension ListViewController {
+	private func getImageCommentCell(at index: Int, file: StaticString = #filePath, line: UInt = #line) -> ImageCommentCell? {
+		let view = feedImageView(at: index)
 
 		guard let cell = view as? ImageCommentCell else {
-			return XCTFail("Expected \(FeedImageCell.self) instance, got \(String(describing: view)) instead", file: file, line: line)
+			XCTFail("Expected \(FeedImageCell.self) instance, got \(String(describing: view)) instead", file: file, line: line)
+			return nil
 		}
 
-		XCTAssertEqual(cell.commentLabel.text, imageComment.message, "Expected message text to be \(String(describing: imageComment.message)) for image comment view at index (\(index))", file: file, line: line)
-
-		XCTAssertEqual(cell.authorLabel.text, imageComment.author, "Expected author text to be \(String(describing: imageComment.author)) for image comment view at index (\(index)", file: file, line: line)
-
-		let createdAt = dateFormatter.localizedString(for: imageComment.createdAt, relativeTo: Date())
-		XCTAssertEqual(cell.dateLabel.text, createdAt, "Expected creation date text to be \(String(describing: createdAt)) for image comment view at index (\(index)", file: file, line: line)
+		return cell
 	}
 
-	private func executeRunLoopToCleanUpReferences() {
-		RunLoop.current.run(until: Date())
+	func commentText(at index: Int, file: StaticString = #filePath, line: UInt = #line) -> String? {
+		return getImageCommentCell(at: index)?.commentLabel.text
+	}
+
+	func authorText(at index: Int, file: StaticString = #filePath, line: UInt = #line) -> String? {
+		return getImageCommentCell(at: index)?.authorLabel.text
+	}
+
+	func dateText(at index: Int, file: StaticString = #filePath, line: UInt = #line) -> String? {
+		return getImageCommentCell(at: index)?.dateLabel.text
 	}
 }

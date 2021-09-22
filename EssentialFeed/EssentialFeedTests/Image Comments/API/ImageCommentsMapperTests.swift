@@ -3,7 +3,7 @@
 //
 
 import XCTest
-@testable import EssentialFeed
+import EssentialFeed
 
 class ImageCommentsMapperTests: XCTestCase {
 	func test_map_throwsErrorOnNon2xxHTTPResponse() throws {
@@ -19,7 +19,7 @@ class ImageCommentsMapperTests: XCTestCase {
 
 	func test_map_throwsErrorOn2xxHTTPResponseWithInvalidJSON() throws {
 		let invalidJSON = Data("invalid json".utf8)
-		let samples = [200, 201, 202, 203]
+		let samples = [200, 201, 202, 203, 299]
 
 		try samples.forEach { code in
 			XCTAssertThrowsError(
@@ -30,7 +30,7 @@ class ImageCommentsMapperTests: XCTestCase {
 
 	func test_map_deliversNoItemsOn2xxHTTPResponseWithEmptyJSONList() throws {
 		let emptyListJSON = makeItemsJSON([])
-		let samples = [200, 201, 202, 203]
+		let samples = [200, 201, 202, 203, 299]
 
 		try samples.forEach { code in
 			let result = try ImageCommentsMapper.map(emptyListJSON, from: HTTPURLResponse(statusCode: code))
@@ -53,7 +53,7 @@ class ImageCommentsMapperTests: XCTestCase {
 			author: "another username")
 
 		let json = makeItemsJSON([item1.json, item2.json])
-		let samples = [200, 201, 202, 203]
+		let samples = [200, 201, 202, 203, 299]
 
 		try samples.forEach { code in
 			let result = try ImageCommentsMapper.map(json, from: HTTPURLResponse(statusCode: code))
@@ -67,12 +67,12 @@ class ImageCommentsMapperTests: XCTestCase {
 	private func makeItem(id: UUID, message: String, creationDate: (date: Date, iso8601String: String), author: String) -> (model: ImageComment, json: [String: Any]) {
 		let item = ImageComment(id: id, message: message, createdAt: creationDate.date, author: author)
 
-		let json = [
+		let json: [String: Any] = [
 			"id": id.uuidString,
 			"message": message,
 			"created_at": creationDate.iso8601String,
 			"author": ["username": author]
-		].compactMapValues { $0 }
+		]
 
 		return (item, json)
 	}

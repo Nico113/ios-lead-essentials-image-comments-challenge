@@ -4,7 +4,7 @@
 
 import Foundation
 
-public class ImageCommentsMapper {
+public final class ImageCommentsMapper {
 	private struct Root: Decodable {
 		private let items: [RemoteImageComment]
 
@@ -28,14 +28,24 @@ public class ImageCommentsMapper {
 		case invalidData
 	}
 
+	private init() {}
+
 	public static func map(_ data: Data, from response: HTTPURLResponse) throws -> [ImageComment] {
 		let decoder = JSONDecoder()
 		decoder.dateDecodingStrategy = .iso8601
 
-		guard response.isRangeOK, let root = try? decoder.decode(Root.self, from: data) else {
+		guard response.isStatusCodeOK, let root = try? decoder.decode(Root.self, from: data) else {
 			throw Error.invalidData
 		}
 
 		return root.comments
+	}
+}
+
+extension HTTPURLResponse {
+	private static var OK_2xx: Range<Int> { return 200 ..< 300 }
+
+	var isStatusCodeOK: Bool {
+		return HTTPURLResponse.OK_2xx.contains(statusCode)
 	}
 }

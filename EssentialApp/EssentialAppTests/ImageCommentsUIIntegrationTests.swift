@@ -4,8 +4,9 @@
 
 import XCTest
 import UIKit
+import Combine
 import EssentialApp
-@testable import EssentialFeed
+import EssentialFeed
 import EssentialFeediOS
 
 class ImageCommentsUIIntegrationTests: XCTestCase {
@@ -14,7 +15,7 @@ class ImageCommentsUIIntegrationTests: XCTestCase {
 
 		sut.loadViewIfNeeded()
 
-		XCTAssertEqual(sut.title, ImageCommentsPresenter.title)
+		XCTAssertEqual(sut.title, getImageCommentsTitle())
 	}
 
 	func test_loadImageCommentsActions_requestImageCommentsFromLoader() {
@@ -80,7 +81,7 @@ class ImageCommentsUIIntegrationTests: XCTestCase {
 	}
 
 	func test_loadImageCommentsCompletion_doesNotAlterCurrentRenderingStateOnError() {
-		let imageComment0 = makeImageComment(message: "message one", createdAt: Date(), author: "author one")
+		let imageComment0 = makeImageComment()
 		let (sut, loader) = makeSUT()
 
 		sut.loadViewIfNeeded()
@@ -130,6 +131,23 @@ class ImageCommentsUIIntegrationTests: XCTestCase {
 		XCTAssertEqual(sut.errorMessage, nil)
 	}
 
+	func test_deinit_cancelsRunningRequest() {
+		var cancelCallCount = 0
+		var sut: ListViewController?
+		autoreleasepool {
+			sut = CommentsUIComposer.imageCommentsComposedWith(imageCommentLoader: {
+				PassthroughSubject<[ImageComment], Error>()
+					.handleEvents(receiveCancel: {
+						cancelCallCount += 1
+					}).eraseToAnyPublisher()
+			})
+			sut?.loadViewIfNeeded()
+		}
+		XCTAssertEqual(cancelCallCount, 0)
+		sut = nil
+		XCTAssertEqual(cancelCallCount, 1)
+	}
+
 	// MARK: - Helpers
 
 	private func makeSUT(
@@ -143,7 +161,11 @@ class ImageCommentsUIIntegrationTests: XCTestCase {
 		return (sut, loader)
 	}
 
-	private func makeImageComment(message: String, createdAt: Date, author: String) -> ImageComment {
+	private func getImageCommentsTitle() -> String {
+		return ImageCommentsPresenter.title
+	}
+
+	private func makeImageComment(message: String = "a message", createdAt: Date = Date(), author: String = "an author") -> ImageComment {
 		return ImageComment(id: UUID(), message: message, createdAt: createdAt, author: author)
 	}
 }

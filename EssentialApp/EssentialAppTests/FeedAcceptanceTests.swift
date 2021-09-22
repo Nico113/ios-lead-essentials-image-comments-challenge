@@ -52,16 +52,15 @@ class FeedAcceptanceTests: XCTestCase {
 	}
 
 	func test_onImageSelection_displaysImageCommentsScreen() {
-		let feed = launch(httpClient: .online(response), store: .empty)
+		let imageComments = presentImageCommentsScreen()
+		let imageCommentsViewController = imageComments.navigationController?.topViewController as? ListViewController
+		XCTAssertEqual(imageCommentsViewController?.title, ImageCommentsPresenter.title)
 
-		XCTAssertEqual(feed.numberOfRenderedFeedImageViews(), 2)
-		XCTAssertEqual(feed.renderedFeedImageData(at: 0), makeImageData())
-		XCTAssertEqual(feed.renderedFeedImageData(at: 1), makeImageData())
-
-		feed.simulateTapOnFeedImage(at: 0)
-
-		RunLoop.current.run(until: Date())
-		XCTAssertEqual(feed.navigationController?.topViewController?.title, ImageCommentsPresenter.title)
+		XCTAssertEqual(imageComments.numberOfRenderedFeedImageViews(), 2)
+		let cell = imageCommentsViewController?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? ImageCommentCell
+		XCTAssertNotNil(cell)
+		XCTAssertEqual(cell?.commentLabel.text, "Message_1")
+		XCTAssertEqual(cell?.authorLabel.text, "author_1")
 	}
 
 	// MARK: - Helpers
@@ -97,7 +96,7 @@ class FeedAcceptanceTests: XCTestCase {
 			return makeFeedData()
 
 		default:
-			return Data()
+			return makeImageCommentData()
 		}
 	}
 
@@ -110,5 +109,20 @@ class FeedAcceptanceTests: XCTestCase {
 			["id": "2AB2AE66-A4B7-4A16-B374-51BBAC8DB086", "image": "http://feed.com/image-1"],
 			["id": "A28F5FE3-27A7-44E9-8DF5-53742D0E4A5A", "image": "http://feed.com/image-2"]
 		]])
+	}
+
+	private func makeImageCommentData() -> Data {
+		return try! JSONSerialization.data(withJSONObject: ["items": [
+			["id": "2AB2AE66-A4B7-4A16-B374-51BBAC8DB086", "message": "Message_1", "created_at": "2020-08-28T15:07:02+00:00", "author": ["username": "author_1"]],
+			["id": "A28F5FE3-27A7-44E9-8DF5-53742D0E4A5A", "message": "Message_2", "created_at": "2020-01-01T12:31:22+00:00", "author": ["username": "author_2"]]
+		]])
+	}
+
+	private func presentImageCommentsScreen() -> ListViewController {
+		let feed = launch(httpClient: .online(response), store: .empty)
+		feed.simulateTapOnFeedImage(at: 0)
+		RunLoop.current.run(until: Date())
+
+		return feed
 	}
 }

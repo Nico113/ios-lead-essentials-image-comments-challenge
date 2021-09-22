@@ -62,7 +62,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	}
 
 	private func makeRemoteImageCommentsLoader(for image: FeedImage) -> () -> AnyPublisher<[ImageComment], Error> {
-		let url = ImageCommentEndpoint.get.url(baseURL: baseURL, imageId: image.id.uuidString)
+		let url = ImageCommentEndpoint.get(image.id).url(baseURL: baseURL)
 
 		return { [httpClient] in
 			httpClient

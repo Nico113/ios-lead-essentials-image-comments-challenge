@@ -3,7 +3,7 @@
 //
 
 import XCTest
-@testable import EssentialFeed
+import EssentialFeed
 
 class ImageCommentPresenterTests: XCTestCase {
 	func test_map_createsViewModel() {

@@ -5,12 +5,13 @@
 import XCTest
 import EssentialFeed
 
-class ImageCommentsEndpointTests: XCTestCase {
+class ImageCommentEndpointTests: XCTestCase {
 	func test_imageComments_endpointURL() {
 		let baseURL = URL(string: "http://base-url.com")!
 
-		let received = ImageCommentEndpoint.get.url(baseURL: baseURL, imageId: "imageId")
-		let expected = URL(string: "http://base-url.com/v1/image/imageId/comments")!
+		let uuid = UUID()
+		let received = ImageCommentEndpoint.get(uuid).url(baseURL: baseURL)
+		let expected = URL(string: "http://base-url.com/v1/image/\(uuid.uuidString)/comments")!
 
 		XCTAssertEqual(received, expected)
 	}

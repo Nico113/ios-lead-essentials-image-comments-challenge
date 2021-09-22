@@ -3,7 +3,7 @@
 //
 
 import XCTest
-@testable import EssentialFeed
+import EssentialFeed
 
 class ImageCommentsPresenterTests: XCTestCase {
 	func test_title_isLocalized() {
@@ -11,7 +11,7 @@ class ImageCommentsPresenterTests: XCTestCase {
 	}
 
 	func test_map_createsViewModel() {
-		let comments = uniqueImageComments().models
+		let comments = uniqueImageComments()
 
 		let viewModel = ImageCommentsPresenter.map(comments)
 
@@ -34,9 +34,7 @@ class ImageCommentsPresenterTests: XCTestCase {
 		return ImageComment(id: UUID(), message: "a message", createdAt: Date(), author: "an author")
 	}
 
-	private func uniqueImageComments() -> (models: [ImageComment], local: [LocalImageComment]) {
-		let models = [uniqueImageComment(), uniqueImageComment()]
-		let local = models.map { LocalImageComment(id: $0.id, message: $0.message, createdAt: $0.createdAt, author: $0.author) }
-		return (models, local)
+	private func uniqueImageComments() -> [ImageComment] {
+		return [uniqueImageComment(), uniqueImageComment()]
 	}
 }
